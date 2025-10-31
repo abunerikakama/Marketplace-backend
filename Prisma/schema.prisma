@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  name        String?
+  email       String    @unique
+  phone       String? 
+  password    String
+  role        String    @default("user")
+  profilePhoto String?
+  subscription Subscription?
+  items       Item[]
+  boosts      Boost[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Item {
+  id           String   @id @default(cuid())
+  seller        User     @relation(fields: [sellerId], references: [id])
+  sellerId      String
+  title         String
+  description   String
+  category      String
+  condition     String
+  price         Int
+  currency      String  @default("UGX")
+  photos        String[] @default([])
+  city          String?
+  region        String?
+  lat           Float?
+  lng           Float?
+  status        String   @default("active")
+  boosted       Boolean  @default(false)
+  boostedUntil  DateTime?
+  viewsCount    Int      @default(0)
+  messagesCount Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Boost {
+  id               String   @id @default(cuid())
+  item             Item     @relation(fields: [itemId], references: [id])
+  itemId           String
+  seller           User     @relation(fields: [sellerId], references: [id])
+  sellerId         String
+  boostType        String
+  amount           Int
+  currency         String   @default("UGX")
+  paymentProvider  String?
+  paymentReference String?
+  status           String   @default("pending")
+  startsAt         DateTime?
+  endsAt           DateTime?
+  createdAt        DateTime @default(now())
+}
+
+model Subscription {
+  id               String   @id @default(cuid())
+  user             User     @relation(fields: [userId], references: [id])
+  userId           String   @unique
+  planId           String
+  status           String   @default("active")
+  startsAt         DateTime
+  endsAt           DateTime
+  paymentReference String?
+  createdAt        DateTime @default(now())
+}
+
+model PaymentLog {
+  id             String   @id @default(cuid())
+  provider       String
+  providerRef    String
+  amount         Int
+  currency       String
+  status         String
+  metadata       Json?
+  createdAt      DateTime @default(now())
+}
