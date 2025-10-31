@@ -1,0 +1,8 @@
+# copy to .env and update
+PORT=4000
+JWT_SECRET=change_this_to_a_long_random_string
+DATABASE_URL="file:./dev.db"
+APP_BASE_URL=http://localhost:4000
+# Payment provider secrets (fill when ready)
+FLUTTERWAVE_SECRET=
+PAYSTACK_SECRET=
